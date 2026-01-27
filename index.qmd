@@ -54,7 +54,17 @@ Source : satellitevu.com Comparaison entre HotSat-1 (Qui a survécu 6 mois) et L
 :::
 
 ::: {.notes}
-NOTE 1 :
+Introduction : Exemple de l'importance de la résolution ...
+
+Gauche: img sat avec résolution 3.5m (+ petite dist mesurable)
+
+Droite: 100m
+
+-> Si étude d'îlots de chaleur, on veut image 1
+
+Mais... Image gauche sat 2023 tenu 6 mois vs Image droite Landsat nasa, 10 ans et données accessibles
+
+-> Donc SR = question comment passer d'image droite à image gauche
 :::
 
 ## Sous-échantillonnage 
@@ -90,14 +100,19 @@ Comment diminuer le nombre d'acquisition de mesures point à point sans (trop) d
 :::
 
 ::: {.notes}
-NOTE 2 :
+Ds la slide précédente: Images via caméra (ie tableau de capteurs séparés par dist fixe)
+
+Alternative: Image créee pt à pt -> simple & dist choisie, mais long tps d'acq pour parcourir l'img
+
+Le pb abordé ici: Commt diminuer nb acq sans dégrader l'img
 :::
 
 
 # Modèle: Instrumentation 101 {visibility="uncounted"}
 
 ::: {.notes}
-NOTE 3 :
+Pour expliquer le pb, j'ai besoin de poser les bases d'instrum sur la modélis d'une mesure.
+
 :::
 
 
@@ -115,14 +130,24 @@ $$ y = Ш_{\Delta\vec{x}}(((x\cdot\phi)\otimes h)) + \epsilon$$
 :::
 
 ::: {.notes}
-NOTE 5 :
+général : vérité terrain = H * mesure
+
+En détail et sur img: séparé en analog et num
+
+h floute l'img, Sha échantillonne
+
+donc lim analog (img centre) qui dépend lbda -> ie nos images IR sont jamais aussi précises que visible
+
+et num -> Besoin de 2 pix par période
+
+Rq: Vrai pr img et signaux, une img n'est qu'un signal spatial 2D
 :::
 
 
 # Compressive Sensing {visibility="uncounted"}
 
 ::: {.notes}
-NOTE 6 :
+Pour la suite on s'intéresse à commt dépasser/contourner la lim de Shannon
 :::
 
 
@@ -297,14 +322,25 @@ fig.show()
 ```
 
 ::: {.notes}
-NOTE 6 :
+Lim Shannon basée sur: Ech reg et sig qcq
+
+CS: Paradigme diff irreg & éparse
+
+éparse = exist 1 base ds laquelle signal nul en la +part des pts
+
+Exemple: sig compo 2 sin 2Hz et 30Hz (rouge), et sa tf (bas)
+Si éch à 100Hz -> Sig bleu
+
+En parallèle: Sig vert reconstruit via méthode de CS à partir de 50 pts (2x moins que Shannon) mais dont la dist entre 2 pts peut être inf à 10ms
+
+Maintenant si j'augm f signal -> Qualité recons diminue jusqu'à 50, off au delà, mais CS reste OK
 :::
 
 
 # Exemples {visibility="uncounted"}
 
 ::: {.notes}
-NOTE 7 :
+Maintenant que j'ai expliqué le principe, quelques exemples d'appli
 :::
 
 
@@ -319,7 +355,9 @@ Exemples d'applications du Compressive Sensing :
 - Scans point à point : STEM, AFM, __Flying Spot__, __Scanning Photothermal Radiometry__, etc. 
 
 ::: {.notes}
-NOTE 8 :
+Méthode émergé / 20 ans -> Appli à plein de méthodes (classif, tt panel de mesures, signaux, images, 3D)
+
+Mon travail ds l'équipe ICT adapter ces méthodes à l'imagerie IR ds l'équipe / manips de Tomo, FS, SPR, et SR
 :::
 
 
@@ -337,7 +375,15 @@ Merci à Jordan Letessier pour les mesures de tomo/lamino sur matériaux semi-tr
 
 
 ::: {.notes}
-NOTE 9 :
+Tomo: Principe recons 3D à partir d'img 2D
+
+obj: Diminuer le nb d'angles
+
+retombe sur pb similaire à l'illus prec
+
+on divise par 2 le nb points du signal bleu et reconstruit vert
+
+on arrive à recons l'allure mais signal très bruité. Résults prélim, Jordan a amélio la quali du signal depuis
 :::
 
 
@@ -376,7 +422,13 @@ NOTE 9 :
 ![](images/schema_simplif_FS.svg){width=75% fig-align="center"}
 
 ::: {.notes}
-NOTE 10 :
+Maintenant / méthode pt à pt
+
+Principe FS: On envoie une impuls laser IR, on regarde la réponse et on en déduit des prop thermiques (ici l'effusiv)
+
+Pour avoir 1 img, à répéter pr chque pt voir sur la vid chque pt prend 3s, x32^2 d'où l'intéret de dim nb de mesures
+
+sous ech aléatoire de 100% (sert de réf ici) on passe à 20 et on réussit à reconstruire l'img avec la struct de l'ech tjrs visible, mais qqes pertes de détails
 :::
 
 
@@ -398,7 +450,11 @@ Merci à Alejandro Mateos Canseco pour les mesures SPR
 :::
 
 ::: {.notes}
-NOTE 11 :
+Second exemple: Principe similaire: mes pt à pt mais à échelle totalement diff: 1um
+
+Sans rentrer dans le fonctionnement on a une réponse thermique d'un composite utilisé en aéro pour détecter des var ds les résist de contact thermique (entre fibre et matrice)
+
+Encore une fois vérité terrain pour illus, sous ech à 0.07... Et on réussit à reconstruire assez fidèlement l'img
 :::
 
 
@@ -451,14 +507,20 @@ NOTE 11 :
 :::
 
 ::: {.notes}
-NOTE 12 :
+Enfin, cas de superres
+
+Principe: ré-ech le signal cam, via 1 intermédiaire masques avec des pts on/off de taille + petite que pix
+
+objet imagé / masque et ensemble ré-imagé sur cam...
+
+répété +ieurs fois... et avec tte cette donnée (masques + cam) on reconstruit 1 img de la taille des masques et pas de la cam, exemple 20x20 devient 80x80
 :::
 
 
 # Conclusion {visibility="uncounted"}
 
 ::: {.notes}
-NOTE 13 :
+Conclusion
 :::
 
 

@@ -4,6 +4,9 @@ $it.key$="$it.value$"$endfor$">
     $if(title-image)$
       <div style="flex: 1; height: 100%; align-items: center;  padding-right: 40px;">
         <img src=$title-image$ style="margin-top: 75%; left: 0px;">
+        $if(QR)$
+          <img src=$QR$ style="left: 0px;">
+        $endif$
       </div>
     $endif$
     <div style="display: flex; flex-direction: column; flex: 3; padding: 10px;

@@ -1,0 +1,511 @@
+
+---
+title: "Compressive Sensing pour l'imagerie infrarouge"
+title-image: "images/Logo_I2M.png"
+author: "Florian Crouau" 
+supervisors: "Jérémie Maire, Stéphane Chevalier, Jean-Luc Battaglia"
+institute: "I2M, Université de Bordeaux"
+date: "2026-01-30"
+date-format: iso 
+format:
+    revealjs:
+        theme: bordeaux.scss
+        width: 1920 # default: 970
+        height: 1080 # default: 700
+        margin: 0
+        lang: fr
+        controls: true
+        progress: true
+        <!-- toc: true
+        toc-depth: 1 -->
+        transition: fade
+        <!-- background-transition: none -->
+        footer: "Journée TREFLE: Super-résolution et Compressive Sensing"
+        slide-number: c/t
+        transition: slide
+        auto-play-media: true
+        html-math-method: katex
+        embed-resources: false
+        #
+        view-distance: 10
+        template-partials:
+                - title-slide.html
+        title-slide-attributes:
+                data-background-image: "images/bordeaux.svg"
+---
+
+# Introduction {visibility="uncounted"}
+
+## Super-résolution 
+Importance de la résolution en imagerie IR : Cas d'images satellites 
+
+![](images/hotsat_v_landsat.jpeg){width=80% fig-align="center"}
+
+
+::: {.callout-note icon=false style="font-size: 1.25em;"} 
+## Super-résolution : 
+Comment aller chercher de l'information plus petite échelle que ce que permet le capteur ? 
+:::
+
+::: {.aside}
+Source : satellitevu.com Comparaison entre HotSat-1 (Qui a survécu 6 mois) et Landsat
+:::
+
+::: {.notes}
+NOTE 1 :
+:::
+
+## Sous-échantillonnage 
+
+::: centered
+::: columns
+
+::: {.column width="5%"}
+:::
+
+::: {.column width="45%"}
+
+Mesures point à point : 
+
+✓ Distance entre mesures choisie
+
+✗ Temps d'acquisition 
+:::
+
+::: {.column width="45%"}
+![Analogie écran CRT](images/crt_high_speed.webp){width=60% style="text-align: center;"}
+:::
+
+::: {.column width="5%"}
+:::
+
+:::
+:::
+
+::: {.callout-note icon=false style="font-size: 1.25em;"} 
+## Sous-échantillonnage :
+Comment diminuer le nombre d'acquisition de mesures point à point sans (trop) dégrader l'image résultante ? 
+:::
+
+::: {.notes}
+NOTE 2 :
+:::
+
+
+# Modèle: Instrumentation 101 {visibility="uncounted"}
+
+::: {.notes}
+NOTE 3 :
+:::
+
+
+## Modélisation d'un système de mesure optique
+
+::: { .r-stack }
+
+![](images/slide4_part1.svg){.fragment .fade-out fragment-index=1 width=1650 fig-align="center"}
+
+![](images/slide4_full.svg){.fragment fragment-index=1 width=1650 fig-align="center"}
+:::
+
+::: {.fragment fragment-index=1}
+$$ y = Ш_{\Delta\vec{x}}(((x\cdot\phi)\otimes h)) + \epsilon$$ 
+:::
+
+::: {.notes}
+NOTE 5 :
+:::
+
+
+# Compressive Sensing {visibility="uncounted"}
+
+::: {.notes}
+NOTE 6 :
+:::
+
+
+## Principe général 
+
+
+::: centered
+::: columns
+
+::: {.column width="5%"}
+::: centered
+:::
+:::
+
+::: {.column width="45%"}
+::: centered
+::: {.callout-note icon=false} 
+## Hypothèses du théorème d'échantillonnage
+
+- Pour un échantillonnage régulier 
+- Signal quelconque jusqu'à $f_{max} = \frac{f_{ech}}{2}$
+:::
+:::
+:::
+
+
+::: {.column width="45%"}
+::: centered
+::: {.callout-important icon=false} 
+
+## Hypothèses du Compressive Sensing 
+
+- Échantillonnage irrégulier 
+- Signal « __éparse__ » dans une base donnée 
+:::
+:::
+:::
+
+::: {.column width="5%"}
+::: centered
+:::
+:::
+
+:::
+:::
+
+```{python}
+#| label: compare_CS
+#| out-width: 95%
+#| fig-width: 9
+
+# from plotly.offline import plot
+import plotly.graph_objs as go
+from plotly.subplots import make_subplots
+import scipy.fft as fft
+import numpy as np
+import pylops
+
+n_full = 1000
+t_c = np.linspace(0,1,n_full)
+f = np.linspace(1,100,100)
+
+np.random.seed(1234)
+perc_subsampling = 0.05
+Nsub = int(np.round(n_full * perc_subsampling))
+pts_util = np.sort(np.random.permutation(np.arange(n_full))[:Nsub])
+Rop = pylops.Restriction(n_full, pts_util, dtype="float64")
+FFTop = 10 * pylops.signalprocessing.FFT(n_full)
+
+# Add traces, one for each slider step
+f_0 = 0
+freq_range = np.arange(f_0, 130, 2)
+fig = make_subplots(rows=2, cols=2)
+
+for freq in freq_range:
+    x_c = np.cos(2*np.pi*2*t_c) + np.cos(2*np.pi*freq*t_c + np.pi/3)
+    ksi_c = fft.fft(x_c)
+    ksi_s = fft.fft(x_c[::10])
+    ksi_s[50:] = 0
+    
+    y_fista = Rop * x_c
+    ymask_fista = Rop.mask(x_c)
+    f_fista, niterf, costf = pylops.optimization.sparsity.fista(
+        Rop * FFTop.H,y_fista,niter=200,eps=0.7,tol=1e-7)
+    x_fista = np.real(FFTop.H * f_fista)
+    
+    trace_c = go.Scatter(
+            visible=False,
+            line={'color': 'red'},
+#            line=dict(color="#00CED1", width=6),
+#            name="f = " + str(freq),
+            x=t_c,
+            y=x_c)
+    
+    trace_ksi_c = go.Scatter(
+            visible=False,
+            line={'color': 'red'},
+            x=f,
+            y=np.abs(ksi_c[0:100])/10)
+
+    trace_s = go.Scatter(
+            visible=False,
+            line={'color': 'blue'},
+            x=t_c[::10],
+            y=x_c[::10])
+    
+    trace_ksi_s = go.Scatter(
+            visible=False,
+            line={'color': 'blue'},
+            x=f,
+            y=np.abs(ksi_s))
+    
+    trace_x_fista = go.Scatter(
+            visible=False,
+            line={'color': 'green'},
+            x=t_c,
+            y=x_fista)
+    
+    trace_x_subsamp = go.Scatter(
+            visible=False,
+            mode='markers',
+            marker=dict(color='black'),# symbol='circle-open'),
+            x=t_c[pts_util],
+            y=x_c[pts_util])    
+    
+    trace_f_fista = go.Scatter(
+            visible=False,
+            line={'color': 'green'},
+            x=f,
+            y=np.abs(f_fista)*33)
+    
+    fig.append_trace(trace_c, row=1, col=1)
+    fig.append_trace(trace_s, row=1, col=1)
+    #
+    fig.append_trace(trace_ksi_c, row=2, col=1)
+    fig.append_trace(trace_ksi_s, row=2, col=1)
+    #--#
+    fig.append_trace(trace_c, row=1, col=2)
+    fig.append_trace(trace_x_subsamp, row=1, col=2)
+    fig.append_trace(trace_x_fista, row=1, col=2)
+    #
+    fig.append_trace(trace_ksi_c, row=2, col=2)
+    fig.append_trace(trace_f_fista, row=2, col=2) 
+
+n_figs = 9
+        
+starting_step = 15
+for i in range(9): 
+     fig.data[i+9*starting_step].visible = True
+
+# Create and add slider
+steps = []
+for i in range(0,len(fig.data),n_figs):
+    step = dict(
+        method="restyle",
+        args=[{"visible": [False] * len(fig.data)}],  #Everything reset to non visible
+        label= str(i*2//9+f_0),
+    )
+    step["args"][0]["visible"][i:i+n_figs-1] = [True]*n_figs  # Toggle i'th trace to "visible" for each plot
+    steps.append(step)
+
+sliders = [dict(
+    active=starting_step,
+    steps=steps
+)]
+
+fig.layout.sliders=sliders
+
+fig.update_layout(height=700, width=1900) # C'est moche comme méthode
+fig.update(layout_showlegend=False)
+fig.show()
+```
+
+::: {.notes}
+NOTE 6 :
+:::
+
+
+# Exemples {visibility="uncounted"}
+
+::: {.notes}
+NOTE 7 :
+:::
+
+
+## Quelles applications en instrumentation ? 
+
+Exemples d'applications du Compressive Sensing : 
+
+- Détection/classification d'objets
+- radio-téléscopes
+- Caméras : Single Pixel Cameras et __Super-résolution__
+- Mesures 3D : Holographie, IRM, __Tomographie__, etc.
+- Scans point à point : STEM, AFM, __Flying Spot__, __Scanning Photothermal Radiometry__, etc. 
+
+::: {.notes}
+NOTE 8 :
+:::
+
+
+## Exemple Tomographie
+
+Principe de la tomographie : Reconstruction d'un objet 3D à partir d'une série de mesures d'images 2D $(x,y)$ prises sous une série d'angles $\theta$ différents.
+
+Diminuer le temps d'acquisition = Diminuer le nombre d'angles $\rightarrow$ Série de reconstructions 1D pour chaque pixel
+
+![](images/tomo.svg){width=45% fig-align="center"}
+
+::: {.aside}
+Merci à Jordan Letessier pour les mesures de tomo/lamino sur matériaux semi-transparents
+:::
+
+
+::: {.notes}
+NOTE 9 :
+:::
+
+
+
+## Exemple Flying Spot sous-échantillonné
+
+<!--{.unlisted auto-animate=true }-->
+<!--Ze centered Zey do nothing-->
+::: centered
+::: columns
+::: {.column width="12.5%"}
+
+:::
+
+::: {.column width="25%"}
+::: centered
+
+![](images/output.mp4){style="width:80%; top:1.25em;" fig-align="center" }
+
+
+:::
+:::
+
+::: {.column width="50%"}
+::: centered
+![](images/schema_FS_2.svg){width=100% fig-align="center"}
+:::
+:::
+
+::: {.column width="12.5%"}
+
+:::
+:::
+:::
+
+![](images/schema_simplif_FS.svg){width=75% fig-align="center"}
+
+::: {.notes}
+NOTE 10 :
+:::
+
+
+## Exemple SPR
+
+::: { .r-stack }
+
+![](images/SPR_p1.svg){width=1700 fig-align="center"}
+
+![](images/SPR_p2.svg){.fragment fragment-index=1 width=1700 fig-align="center"}
+:::
+
+::: {style="text-align: center;"}
+Nombre de points divisé par 14 : ~1h devient ~5min
+:::
+
+::: {.aside}
+Merci à Alejandro Mateos Canseco pour les mesures SPR
+:::
+
+::: {.notes}
+NOTE 11 :
+:::
+
+
+## Exemple Imagerie IR super-résolue
+
+
+::: { .r-stack }
+
+![](images/Schema_Principe_DMD_simplifie_bg.svg){width=1700 fig-align="center"}
+
+![](images/Schema_Principe_DMD_simplifie_p0.svg){.fragment .fade-out fragment-index=1 width=1700 fig-align="center"}
+
+![](images/Schema_Principe_DMD_simplifie_p1.svg){.fragment .fade-in-then-out fragment-index=1 width=1700 fig-align="center"}
+
+![](images/Schema_Principe_DMD_simplifie_p2.svg){.fragment fragment-index=2 width=1700 fig-align="center"}
+:::
+
+
+::: centered
+::: columns
+::: {.column width="12.5%"}
+:::
+
+::: {.column style="width:33%;text-align:center"}
+::: centered
+![Image capteur $20 \times 20$](images/SR_moyenne.svg){width=80% fig-align="center" text-align="center"}
+
+:::
+:::
+
+::: {.column width="9%"}
+::: centered
+
+:::
+:::
+
+::: {.column style="width:33%;text-align:center"}
+::: centered
+![Image reconstruite $80 \times 80$](images/SR_TVAL.svg){width=80% fig-align="center" text-align="center"}
+
+:::
+:::
+
+::: {.column width="12.5%"}
+
+:::
+:::
+:::
+
+::: {.notes}
+NOTE 12 :
+:::
+
+
+# Conclusion {visibility="uncounted"}
+
+::: {.notes}
+NOTE 13 :
+:::
+
+
+## Conclusion
+
+Le Compressive Sensing permet la reconstruction de signaux avec un minimm de mesures. 
+
+::: {.columns style="text-align:center"}
+
+::: {.column width="5%"}
+:::
+
+::: {.column width="45%"}
+En imagerie thermique il permet de : 
+
+::: {.fragment fragment-index=1}
+- Diminuer les temps d'acquisition
+:::
+
+::: {.fragment fragment-index=2}
+- Améliorer la résolution d'images
+:::
+:::
+
+::: {.column width="45%"}
+
+::: { .r-stack }
+![](images/SPR_res.svg){.fragment fragment-index=1 fig-align="center" style="width:1200px; transform:rotate(-5deg);"}
+
+![](images/SR_TVAL.svg){.fragment fragment-index=2 fig-align="center" style="width:1200px; transform:rotate(5deg);"}
+:::
+
+:::
+
+::: {.column width="5%"}
+:::
+
+
+:::
+
+::: {.notes}
+NOTE 14 :
+:::
+
+
+## Questions {background-iframe="https://www.skaping.com/pic-du-midi" background-interactive="false" visibility="uncounted"}
+
+## Présentation {visibility="uncounted"}
+
+Présentation html faite avec Quarto (Reveal.js), illustrations Inkscape, GIMP et Python (Plotly)
+
+100% FOSS (Mis à part quelques pré-traitements de données sous Matlab)
+
+

@@ -1,0 +1,125 @@
+/*-- scss:defaults --*/
+
+// fonts
+$font-family-sans-serif: "Palatino Linotype", "Book Antiqua", Palatino,
+  FreeSerif, serif !default;
+
+// colors
+$body-bg: #E7E2D1 !default; // #f0f1eb
+$body-color: #000 !default;
+$link-color: #51483d !default;
+$selection-bg: #26351c !default;
+
+// headings
+$presentation-heading-font: "Palatino Linotype", "Book Antiqua", Palatino,
+  FreeSerif, serif !default;
+$presentation-heading-color: #383d3d !default;
+
+/*-- scss:rules --*/
+
+.reveal a {
+  line-height: 1.3em;
+}
+
+.reveal .slide-number a {
+    font-size: 1.5em;
+    color:white;
+    bottom: 0px !important;
+}
+
+.reveal .footer > * {
+	background-image: url('bordeaux_footer.svg');
+    background-size: cover;
+	color: white;
+    position: fixed;
+    padding-bottom: 0.25em;
+    padding-top: 1em;
+    bottom: 0px !important;
+    width: 110%;
+    left:-5%;
+}
+
+section.slide h1 {
+    color: #3B1C13;
+    background-color: #009DE0;
+    margin-left: 5%;
+    width: 90%;
+    position: relative;
+    text-align: center;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    width: 90%;
+}
+
+section.slide h2 {
+    color: #3B1C13;
+    background-color: #009DE0;
+    position: relative;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em;
+    top: 0px !important;
+    width: 200%;
+    left: -100%;
+    padding-left: 110%;
+}
+
+section.slide p, pre {
+    margin-left: 5%;
+    width: 90%;
+  }
+  ul {
+    margin-left: 7.5%;
+    width: 85%;
+  }
+  aside {
+    margin-left: 5%;
+    width: 90%;
+  }
+
+section.slide ul {
+    margin-left: 7.5%;
+    width: 85%;
+  }
+
+.navigate-left .controls-arrow {
+  font-size: 20px;
+  opacity:0.33;
+  color: #009DE0;
+  left: -50pt;
+}
+
+.navigate-right .controls-arrow {
+  font-size: 20px;
+  opacity:0.5;
+  color: #009DE0;
+  right: -50pt;
+}
+
+.reveal .slide-menu-button a {
+  font-size:0pt;
+  bottom:-4pt;
+  color: #3B1C13;
+}
+
+.reveal .progress {
+  color: #3B1C13;
+  height: 8pt;
+}
+
+.reveal .slides section div.callout {
+  font-size: 0.75em;
+  margin-left: 5%;
+  margin-right: 5%;
+}
+
+.reveal .slides>section>section[data-transition=slide].past,
+.reveal .slides>section>section[data-transition~=slide-out].past,
+.reveal.slide .slides>section>section:not([data-transition]).past {
+  transform:translate(-125%,0)
+}
+.reveal .slides>section>section[data-transition=slide].future,
+.reveal .slides>section>section[data-transition~=slide-in].future,
+.reveal.slide .slides>section>section:not([data-transition]).future {
+  transform:translate(125%,0)
+}
+

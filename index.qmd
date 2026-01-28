@@ -220,7 +220,7 @@ FFTop = 10 * pylops.signalprocessing.FFT(n_full)
 # Add traces, one for each slider step
 f_0 = 0
 freq_range = np.arange(f_0, 130, 2)
-fig = make_subplots(rows=2, cols=2)
+fig = make_subplots(rows=2, cols=2, subplot_titles=('100 pts, 10ms par pt',  '50 pts, dist min possible entre pts 1ms'))
 
 for freq in freq_range:
     x_c = np.cos(2*np.pi*2*t_c) + np.cos(2*np.pi*freq*t_c + np.pi/3)
@@ -316,8 +316,9 @@ sliders = [dict(
 
 fig.layout.sliders=sliders
 
-fig.update_layout(height=700, width=1900) # C'est moche comme méthode
-# fig.update(layout_showlegend=False)
+fig.update_layout(height=720, width=1920) # C'est moche comme méthode
+fig.update_annotations(font=dict(size=24))
+fig.update(layout_showlegend=False)
 fig.show()
 ```
 
@@ -336,23 +337,21 @@ En parallèle: Sig vert reconstruit via méthode de CS à partir de 50 pts (2x m
 Maintenant si j'augm f signal -> Qualité recons diminue jusqu'à 50, off au delà, mais CS reste OK
 :::
 
-
-# Exemples {visibility="uncounted"}
-
-::: {.notes}
-Maintenant que j'ai expliqué le principe, quelques exemples d'appli
+## Workflow
+::: {.absolute top=25% width=1920}
+![](images/slide6n.svg){width=1700 fig-align="center"}
 :::
 
-
-## Quelles applications en instrumentation ? 
-
-Exemples d'applications du Compressive Sensing : 
+## Quelles applications en instrumentation ?
+::: {.absolute top=25% width=1920}
+Exemples d'applications du Compressive Sensing :
 
 - Détection/classification d'objets
 - radio-téléscopes
 - Caméras : Single Pixel Cameras et __Super-résolution__
 - Mesures 3D : Holographie, IRM, __Tomographie__, etc.
-- Scans point à point : STEM, AFM, __Flying Spot__, __Scanning Photothermal Radiometry__, etc. 
+- Scans point à point : STEM, AFM, __Flying Spot__, __Scanning Photothermal Radiometry__, etc.
+:::
 
 ::: {.notes}
 Méthode émergé / 20 ans -> Appli à plein de méthodes (classif, tt panel de mesures, signaux, images, 3D)
@@ -360,85 +359,19 @@ Méthode émergé / 20 ans -> Appli à plein de méthodes (classif, tt panel de 
 Mon travail ds l'équipe ICT adapter ces méthodes à l'imagerie IR ds l'équipe / manips de Tomo, FS, SPR, et SR
 :::
 
-
-## Exemple Tomographie
-
-Principe de la tomographie : Reconstruction d'un objet 3D à partir d'une série de mesures d'images 2D $(x,y)$ prises sous une série d'angles $\theta$ différents.
-
-Diminuer le temps d'acquisition = Diminuer le nombre d'angles $\rightarrow$ Série de reconstructions 1D pour chaque pixel
-
-![](images/tomo.svg){width=45% fig-align="center"}
-
-::: {.aside}
-Merci à Jordan Letessier pour les mesures de tomo/lamino sur matériaux semi-transparents
-:::
+# Résultats {visibility="uncounted"}
 
 
-::: {.notes}
-Tomo: Principe recons 3D à partir d'img 2D
+## Résultats point à point : SPR
 
-obj: Diminuer le nb d'angles
-
-retombe sur pb similaire à l'illus prec
-
-on divise par 2 le nb points du signal bleu et reconstruit vert
-
-on arrive à recons l'allure mais signal très bruité. Résults prélim, Jordan a amélio la quali du signal depuis
-:::
-
-
-
-## Exemple Flying Spot sous-échantillonné
-
-<!--{.unlisted auto-animate=true }-->
-<!--Ze centered Zey do nothing-->
-::: centered
-::: columns
-::: {.column width="12.5%"}
-
-:::
-
-::: {.column width="25%"}
-::: centered
-
-![](images/output.mp4){style="width:80%; top:1.25em;" fig-align="center" }
-
-
-:::
-:::
-
-::: {.column width="50%"}
-::: centered
-![](images/schema_FS_2.svg){width=100% fig-align="center"}
-:::
-:::
-
-::: {.column width="12.5%"}
-
-:::
-:::
-:::
-
-![](images/schema_simplif_FS.svg){width=75% fig-align="center"}
-
-::: {.notes}
-Maintenant / méthode pt à pt
-
-Principe FS: On envoie une impuls laser IR, on regarde la réponse et on en déduit des prop thermiques (ici l'effusiv)
-
-Pour avoir 1 img, à répéter pr chque pt voir sur la vid chque pt prend 3s, x32^2 d'où l'intéret de dim nb de mesures
-
-sous ech aléatoire de 100% (sert de réf ici) on passe à 20 et on réussit à reconstruire l'img avec la struct de l'ech tjrs visible, mais qqes pertes de détails
-:::
-
-
-## Exemple SPR
+![](images/slideSPR.svg){width=1700 fig-align="center"}
 
 ::: { .r-stack }
+![](images/SPR_p1.svg){width=1650 fig-align="center"}
 
-![](images/SPR_p1.svg){width=1700 fig-align="center"}
+![](images/SPR_p2.svg){.fragment fragment-index=1 width=1650 fig-align="center"}
 
-![](images/SPR_p2.svg){.fragment fragment-index=1 width=1700 fig-align="center"}
+![](images/SPR_p3.svg){.fragment fragment-index=2 width=1650 fig-align="center"}
 :::
 
 ::: {style="text-align: center;"}
@@ -458,7 +391,7 @@ Encore une fois vérité terrain pour illus, sous ech à 0.07... Et on réussit 
 :::
 
 
-## Exemple Imagerie IR super-résolue
+## Résultats Imagerie IR super-résolue
 
 
 ::: { .r-stack }

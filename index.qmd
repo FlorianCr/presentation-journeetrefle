@@ -75,7 +75,7 @@ Mais... Image gauche sat 2023 tenu 6 mois vs Image droite Landsat nasa, 10 ans e
 ::: {.column width="5%"}
 :::
 
-::: {.column width="45%"}
+::: {.column width="35%"}
 
 Mesures point à point : 
 
@@ -84,8 +84,8 @@ Mesures point à point :
 ✗ Temps d'acquisition 
 :::
 
-::: {.column width="45%"}
-![Analogie écran CRT](images/crt_high_speed.webp){width=60% style="text-align: center;"}
+::: {.column width="55%"}
+![](images/scan_sat.png){width=32% } ![](images/scan_sat_wisk.gif){width=65% }
 :::
 
 ::: {.column width="5%"}
@@ -408,30 +408,33 @@ Encore une fois vérité terrain pour illus, sous ech à 0.07... Et on réussit 
 ::: {.fragment fragment-index=2}
 ::: centered
 ::: columns
-::: {.column width="12.5%"}
+::: {.column width="8%"}
 :::
 
-::: {.column style="width:33%;text-align:center"}
+::: {.column style="width:40%;text-align:center"}
 ::: centered
-![Image capteur $20 \times 20$](images/SR_moyenne.svg){width=80% fig-align="center" text-align="center"}
+![](images/SR_moyenne.svg){width=45% fig-align="center" text-align="center"} ![](images/SR_TVAL.svg){width=45% fig-align="center" text-align="center"}
+$20 \times 20 \rightarrow 80 \times 80$
 
 :::
 :::
 
-::: {.column width="9%"}
+::: {.column width="4%"}
 ::: centered
 
 :::
 :::
 
-::: {.column style="width:33%;text-align:center"}
+::: {.column style="width:40%;text-align:center"}
 ::: centered
-![Image reconstruite $80 \times 80$](images/SR_TVAL.svg){width=80% fig-align="center" text-align="center"}
 
+![](images/SR_moyenne2.svg){width=45% fig-align="center" text-align="center"} ![](images/SR_TVAL2.svg){width=45% fig-align="center" text-align="center"}
+
+$16 \times 16 \rightarrow 32 \times 32$
 :::
 :::
 
-::: {.column width="12.5%"}
+::: {.column width="8%"}
 
 :::
 :::

@@ -408,33 +408,33 @@ Encore une fois vérité terrain pour illus, sous ech à 0.07... Et on réussit 
 ::: {.fragment fragment-index=2}
 ::: centered
 ::: columns
-::: {.column width="8%"}
+::: {.column width="5%"}
 :::
 
-::: {.column style="width:40%;text-align:center"}
+::: {.column style="width:35%;text-align:center"}
 ::: centered
-![](images/SR_moyenne.svg){width=45% fig-align="center" text-align="center"} ![](images/SR_TVAL.svg){width=45% fig-align="center" text-align="center"}
+![](images/SR_moyenne.svg){width=49% fig-align="center" text-align="center"} ![](images/SR_TVAL.svg){width=49% fig-align="center" text-align="center"}
 $20 \times 20 \rightarrow 80 \times 80$
 
 :::
 :::
 
-::: {.column width="4%"}
+::: {.column width="20%"}
 ::: centered
-
+![](images/SR_USAF.png){width=85% fig-align="center" text-align="center"}
 :::
 :::
 
-::: {.column style="width:40%;text-align:center"}
+::: {.column style="width:35%;text-align:center"}
 ::: centered
 
-![](images/SR_moyenne2.svg){width=45% fig-align="center" text-align="center"} ![](images/SR_TVAL2.svg){width=45% fig-align="center" text-align="center"}
+![](images/SR_moyenne2.svg){width=49% fig-align="center" text-align="center"} ![](images/SR_TVAL2.svg){width=49% fig-align="center" text-align="center"}
 
 $16 \times 16 \rightarrow 32 \times 32$
 :::
 :::
 
-::: {.column width="8%"}
+::: {.column width="5%"}
 
 :::
 :::
